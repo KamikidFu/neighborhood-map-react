@@ -94,7 +94,7 @@ class MapData extends Component {
             let infoWindow = new google.maps.InfoWindow({
                 content: fetchDataFromWiki(marker)
             });
-
+            
             marker.addListener('click',function(){
                 infoWindow.open(map,marker);
             });
