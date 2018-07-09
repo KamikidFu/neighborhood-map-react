@@ -1,15 +1,13 @@
 import React, {Component} from 'react';
-import MapPresent from './MapPresent';
+import List from './List';
 import PropTypes from 'prop-types';
 
-{/*Insert this into page
+/*Insert this into page
 <script async defer
         src=
             "https://maps.googleapis.com/maps/api/js?key=MYAPIKEY&v=3&callback=initMap">
 </script>
 */
-}
-
 function asyncLoadMap(url) {
     let script = document.createElement('script');
     script.type = 'text/javascript';
@@ -37,7 +35,7 @@ function fetchDataFromWiki(marker){
     });
 }
 
-class MapData extends Component {
+class Map extends Component {
     static propTypes = {
         APIKey: PropTypes.string.isRequired,
         neighborhood: PropTypes.object.isRequired,
@@ -80,10 +78,8 @@ class MapData extends Component {
 
     placeMarkers = (map, attractions) =>{
         let markers = [];
-        attractions.forEach((attract)=>{
-            /*
-             * https://developers.google.com/maps/documentation/javascript/markers#add
-             */
+        attractions.forEach((attract)=>{            
+            //https://developers.google.com/maps/documentation/javascript/markers#add            
             let marker = new google.maps.Marker({
                 position:attract.location,
                 map:map,
@@ -103,6 +99,28 @@ class MapData extends Component {
         });
         this.setState({markers:markers});
     }
+    
+    hideMarkers = (markers)=>{
+        markers.forEach((marker)=>{
+            marker.setMap(null);
+        });
+    }
+    
+    render(){
+        const {map, markers} = this.state;
+        return(
+            <div className="main">
+                <List
+                    map={map}
+                    markers={markers}
+                    placeMarkers = {this.placeMarkers}
+                    hideMarkers={this.hideMarkers}
+                />
+                <div id='map' className='map'>
+            </div>
+            </div>
+        );
+    }
 }
 
-export default MapData
+export default Map;
