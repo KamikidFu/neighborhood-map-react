@@ -18,8 +18,9 @@ function asyncLoadMap(url) {
     insert.parentNode.insertBefore(script, insert);
 }
 
-function fetchDataFromWiki(marker) {
+function assignWikiData(marker, info) {
     let url = 'https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&exintro&titles=' + marker.title + '&format=json&utf8'
+    let content = 'SORRY, NOT FOUND IN WIKI';
     fetch(url, {
         method: 'POST',
         headers: new Headers({
@@ -31,9 +32,10 @@ function fetchDataFromWiki(marker) {
         }
         throw new Error('RESPONSE NOT OK: ' + response.statusText);
     }).then((data) => {
-       let pages = data.query.pages;
-       let extract = pages[Object.keys(pages)[0]].extract;
-       return extract.slice(extract.indexOf('<p>'),extract.lastIndexOf('</p>')+4);
+        let pages = data.query.pages;
+        let extract = pages[Object.keys(pages)[0]].extract;
+        content = extract.slice(extract.indexOf('<p>'), extract.lastIndexOf('</p>'));
+        info.setContent('<div>' + content + '</div>');
     });
 }
 
@@ -49,7 +51,8 @@ class Map extends Component {
         map: {},
         neighborhood: {},
         attractions: [],
-        markers: []
+        markers: [],
+        infowindow: {}
     };
 
     componentDidMount() {
@@ -59,12 +62,18 @@ class Map extends Component {
 
     setup = () => {
         let map = this.initMap(this.props.neighborhood);
+        let infowindow = new window.google.maps.InfoWindow(
+            {
+                content: 'Retrieving data from Wiki...',
+                maxWidth: 360
+            });
         this.setState(
             {
                 APIKey: this.props.APIKey,
                 map: map,
                 neighborhood: this.props.neighborhood,
-                attractions: this.props.attractions
+                attractions: this.props.attractions,
+                infowindow: infowindow
             }, () => {
                 this.placeMarkers(map, this.state.attractions);
             }
@@ -79,8 +88,11 @@ class Map extends Component {
     };
 
     placeMarkers = (map, attractions) => {
+        this.hideMarkers();
         let markers = [];
+        let {infowindow} = this.state;
         attractions.forEach((attract) => {
+
             //https://developers.google.com/maps/documentation/javascript/markers#add            
             let marker = new window.google.maps.Marker({
                 position: attract.location,
@@ -88,36 +100,33 @@ class Map extends Component {
                 title: attract.name
             });
 
-            //https://developers.google.com/maps/documentation/javascript/infowindows
-            let infoWindow = new window.google.maps.InfoWindow({
-                content: fetchDataFromWiki(marker)
-                //content:'Testing'
-            });
-
             marker.addListener('click', function () {
-                infoWindow.open(map, marker);
+                assignWikiData(marker, infowindow);
+                infowindow.open(map, marker);
             });
 
             markers.push(marker);
         });
+        console.log(markers);
         this.setState({markers: markers});
     };
 
-    hideMarkers = (markers) => {
-        markers.forEach((marker) => {
+    hideMarkers = () => {
+        this.state.markers.forEach((marker) => {
             marker.setMap(null);
         });
     };
 
+
     render() {
-        const {map, markers} = this.state;
+        const {map, markers, attractions} = this.state;
         return (
             <div className="main">
                 <List
                     map={map}
                     markers={markers}
+                    attractions={attractions}
                     placeMarkers={this.placeMarkers}
-                    hideMarkers={this.hideMarkers}
                 />
                 <div id='map' className='map'>
                 </div>

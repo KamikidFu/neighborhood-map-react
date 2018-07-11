@@ -15,40 +15,34 @@ class List extends Component {
     };
 
     render() {
-        const {map, markers, placeMarkers, hideMarkers} = this.props;
+        const {map, markers,attractions, placeMarkers} = this.props;
         const {query} = this.state;
 
-        const filteredMarkers = markers.filter(marker => marker.title.toUpperCase().includes(query.toUpperCase()));
+        const filteredAttractions = attractions.filter(a => a.name.toUpperCase().includes(query.toUpperCase()));
+        const filteredMarkers = markers.filter(m=>m.title.toUpperCase().includes(query.toUpperCase()));
+        console.log(filteredAttractions);
         console.log(filteredMarkers);
         return (
             <div className='location-list'>
-                <form className='search'
+                <form className='search-form'
                       onSubmit={
                           (event) => {
-                              hideMarkers(markers);
-                              placeMarkers(map, filteredMarkers);
+                              placeMarkers(map, filteredAttractions);
                               event.preventDefault();
                           }
                       }
                 >
                     <input className='search-input' aria-label='search'
-                           type='text' value={query} placeholder='Attraction Name' onChange={this.updateQuery}
-                           onSubmit={
-                               (event) => {
-                                   hideMarkers(markers);
-                                   placeMarkers(map, filteredMarkers);
-                                   event.preventDefault();
-                               }
-                           }/>
-                    <button className='filter-button' type='submit' value='filter' onClick={this.updateQuery}>
-                        Filter
+                           type='text' value={query} placeholder='Attraction Name' onChange={this.updateQuery}/>
+                    <button className='search-button' type='submit' value='filter' onClick={this.updateQuery}>
+                        Search
                     </button>
                 </form>
                 <ul>
                     {
-                        filteredMarkers.map(marker => (
-                            <li key={marker.title} tabIndex='0'>
-                                {marker.title}
+                        filteredMarkers.map(m => (
+                            <li key={m.title} tabIndex='0'>
+                                {m.title}
                             </li>
                         ))
                     }
