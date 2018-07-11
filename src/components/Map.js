@@ -14,24 +14,26 @@ function asyncLoadMap(url) {
     script.async = true;
     script.src = url;
 
-    let target = document.getElementsByTagName('script');
-    target[0].parentNode.insertBefore(script, target);
+    let insert = document.getElementsByTagName('script')[0];
+    insert.parentNode.insertBefore(script, insert);
 }
 
-function fetchDataFromWiki(marker){
-    let url = 'https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&exintro&titles=' + marker.name + '&format=json&utf8'
-    fetch(url,{
+function fetchDataFromWiki(marker) {
+    let url = 'https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&exintro&titles=' + marker.title + '&format=json&utf8'
+    fetch(url, {
         method: 'POST',
         headers: new Headers({
             'Api-User-Agent': 'Example/1.0'
         })
-    }).then((response)=>{
-        if(response.ok){
+    }).then((response) => {
+        if (response.ok) {
             return response.json();
         }
-        throw new Error('RESPONSE NOT OK: '+response.statusText);
-    }).then((data)=>{
-        return data.query.pages[Object.keys(pages)[0]];
+        throw new Error('RESPONSE NOT OK: ' + response.statusText);
+    }).then((data) => {
+       let pages = data.query.pages;
+       let extract = pages[Object.keys(pages)[0]].extract;
+       return extract.slice(extract.indexOf('<p>'),extract.lastIndexOf('</p>')+4);
     });
 }
 
@@ -64,60 +66,61 @@ class Map extends Component {
                 neighborhood: this.props.neighborhood,
                 attractions: this.props.attractions
             }, () => {
-                this.placeMarkers(map, this.state.attractions, infoWindow);
+                this.placeMarkers(map, this.state.attractions);
             }
         )
     };
 
     initMap = (neighborhood) => {
-        return new windows.google.maps.Map(document.getElementById('map'), {
+        return new window.google.maps.Map(document.getElementById('map'), {
             center: neighborhood.location,
-            zoom: 12
+            zoom: 14
         });
     };
 
-    placeMarkers = (map, attractions) =>{
+    placeMarkers = (map, attractions) => {
         let markers = [];
-        attractions.forEach((attract)=>{            
+        attractions.forEach((attract) => {
             //https://developers.google.com/maps/documentation/javascript/markers#add            
-            let marker = new google.maps.Marker({
-                position:attract.location,
-                map:map,
-                title:attract.name
+            let marker = new window.google.maps.Marker({
+                position: attract.location,
+                map: map,
+                title: attract.name
             });
 
             //https://developers.google.com/maps/documentation/javascript/infowindows
-            let infoWindow = new google.maps.InfoWindow({
+            let infoWindow = new window.google.maps.InfoWindow({
                 content: fetchDataFromWiki(marker)
+                //content:'Testing'
             });
-            
-            marker.addListener('click',function(){
-                infoWindow.open(map,marker);
+
+            marker.addListener('click', function () {
+                infoWindow.open(map, marker);
             });
 
             markers.push(marker);
         });
-        this.setState({markers:markers});
-    }
-    
-    hideMarkers = (markers)=>{
-        markers.forEach((marker)=>{
+        this.setState({markers: markers});
+    };
+
+    hideMarkers = (markers) => {
+        markers.forEach((marker) => {
             marker.setMap(null);
         });
-    }
-    
-    render(){
+    };
+
+    render() {
         const {map, markers} = this.state;
-        return(
+        return (
             <div className="main">
                 <List
                     map={map}
                     markers={markers}
-                    placeMarkers = {this.placeMarkers}
+                    placeMarkers={this.placeMarkers}
                     hideMarkers={this.hideMarkers}
                 />
                 <div id='map' className='map'>
-            </div>
+                </div>
             </div>
         );
     }

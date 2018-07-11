@@ -21,28 +21,28 @@ class App extends Component {
                 }
             },
             {
-                name: 'Te Papa',
+                name: 'Museum of New Zealand Te Papa Tongarewa',
                 location: {
                     'lat': -41.2904563,
                     'lng': 174.7799007
                 }
             },
             {
-                name: 'Caffe Astoria',
+                name: 'Victoria University of Wellington\n',
                 location: {
-                    'lat': -41.282442,
-                    'lng': 174.7742523
+                    'lat': -41.2872599,
+                    'lng': 174.7562615
                 }
             },
             {
-                name: 'Zealandia',
+                name: 'Zealandia (wildlife sanctuary)',
                 location: {
                     'lat': -41.2901575,
                     'lng': 174.7513049
                 }
             },
             {
-                name: 'Mount Victoria Lookout',
+                name: 'Mount Victoria',
                 location: {
                     'lat': -41.2960571,
                     'lng': 174.7921217
