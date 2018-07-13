@@ -119,7 +119,7 @@ class Map extends Component {
 
 
     render() {
-        const {map, markers, attractions} = this.state;
+        const {map, markers, attractions,infowindow} = this.state;
         return (
             <div className="main">
                 <List
@@ -127,6 +127,7 @@ class Map extends Component {
                     markers={markers}
                     attractions={attractions}
                     placeMarkers={this.placeMarkers}
+            infowindow={infowindow}
                 />
                 <div id='map' className='map'>
                 </div>
