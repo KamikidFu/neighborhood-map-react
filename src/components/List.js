@@ -37,24 +37,23 @@ class List extends Component {
     };
 
     render() {
-        const {map, markers,attractions, placeMarkers, infowindow} = this.props;
+        const {map, markers, attractions, placeMarkers, infowindow} = this.props;
         const {query} = this.state;
-       // console.log(markers);
+        // console.log(markers);
         const filteredAttractions = attractions.filter(a => a.name.toUpperCase().includes(query.toUpperCase()));
         //const filteredMarkers = markers.filter(m=>m.title.toUpperCase().includes(query.toUpperCase()));
         console.log(query);
         console.log(filteredAttractions);
-       // console.log(filteredMarkers);
+        // console.log(filteredMarkers);
         return (
             <div className='location-list'>
                 <form className='search-form'
-onChange={
+                      onChange={
                           (event) => {
                               placeMarkers(map, filteredAttractions);
                               event.preventDefault();
                           }
-    
-}
+                      }
                 >
                     <input className='search-input' aria-label='search'
                            type='text' value={query} placeholder='Attraction Name' onChange={this.updateQuery}/>
@@ -65,14 +64,14 @@ onChange={
                 <ul>
                     {
                         filteredAttractions.map(a => (
-                            <li key={a.name} tabIndex='0' onClick={(event)=>{
-                                for(let i=0;i<markers.length;i++){
-                                    if(markers[i].title.trim()===a.name.trim()){
-                                                                   assignWikiData(markers[i],infowindow);
-                                        infowindow.open(map,markers[i]);
-}
+                            <li key={a.name} tabIndex='0' onClick={(event) => {
+                                for (let i = 0; i < markers.length; i++) {
+                                    if (markers[i].title.trim() === a.name.trim()) {
+                                        assignWikiData(markers[i], infowindow);
+                                        infowindow.open(map, markers[i]);
+                                    }
                                 }
-}
+                            }
                             }>
                                 {a.name}
                             </li>
