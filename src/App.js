@@ -2,8 +2,19 @@ import React, {Component} from 'react';
 import Map from './components/Map';
 import './App.css';
 
+/**
+ * Main App Class
+ */
 class App extends Component {
+    /**
+     * To render components
+     * @returns {*}
+     */
     render() {
+        /**
+         * neighborhood is where the map will show
+         * @type {{name: string, location: {lat: number, lng: number}}}
+         */
         let neighborhood = {
             name: 'Wellington',
             location: {
@@ -12,6 +23,10 @@ class App extends Component {
             }
         };
 
+        /**
+         * attractions is an array of attraction object with its name and latlng
+         * @type {*[]}
+         */
         let attractions = [
             {
                 name: 'Wellington Cable Car',
@@ -57,6 +72,9 @@ class App extends Component {
             }
         ];
 
+        /**
+         * return what to render
+         */
         return (
             <div role='application'>
                 <Map

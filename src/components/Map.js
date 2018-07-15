@@ -18,6 +18,11 @@ function asyncLoadMap(url) {
     insert.parentNode.insertBefore(script, insert);
 }
 
+/**
+ * Fetch data from wiki and assign to infowindow
+ * @param marker marker on map
+ * @param info infowindow to show data
+ */
 function assignWikiData(marker, info) {
     let url = 'https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&exintro&titles=' + marker.title + '&format=json&utf8'
     let content = 'SORRY, NOT FOUND IN WIKI';
@@ -39,13 +44,23 @@ function assignWikiData(marker, info) {
     });
 }
 
+/**
+ * class of Map
+ */
 class Map extends Component {
+    /**
+     * Test if the right props passed from parent component to here
+     * @type {{APIKey: *, neighborhood: *, attractions: *}}
+     */
     static propTypes = {
         APIKey: PropTypes.string.isRequired,
         neighborhood: PropTypes.object.isRequired,
         attractions: PropTypes.array.isRequired
     };
-
+    /**
+     * state of this class
+     * @type {{APIKey: string, map: {}, neighborhood: {}, attractions: Array, markers: Array, infowindow: {}}}
+     */
     state = {
         APIKey: '',
         map: {},
@@ -55,11 +70,17 @@ class Map extends Component {
         infowindow: {}
     };
 
+    /**
+     * async load map
+     */
     componentDidMount() {
         window.setup = this.setup;
         asyncLoadMap('https://maps.googleapis.com/maps/api/js?key=' + this.props.APIKey + '&callback=setup')
     }
 
+    /**
+     * setup method to make state, map and infowindow ready
+     */
     setup = () => {
         let map = this.initMap(this.props.neighborhood);
         let infowindow = new window.google.maps.InfoWindow(
@@ -75,18 +96,27 @@ class Map extends Component {
                 attractions: this.props.attractions,
                 infowindow: infowindow
             }, () => {
+                //Async call place markers method to make markers on map
                 this.placeMarkers(map, this.state.attractions);
             }
         )
     };
-
+    /**
+     * return a new map at the neighborhood
+     * @param neighborhood
+     * @returns {window.google.maps.Map}
+     */
     initMap = (neighborhood) => {
         return new window.google.maps.Map(document.getElementById('map'), {
             center: neighborhood.location,
             zoom: 14
         });
     };
-
+    /**
+     * place markers on map
+     * @param map
+     * @param attractions
+     */
     placeMarkers = (map, attractions) => {
         this.hideMarkers();
         let markers = [];
@@ -107,16 +137,16 @@ class Map extends Component {
 
             markers.push(marker);
         });
-        console.log(markers);
         this.setState({markers: markers});
     };
-
+    /**
+     * Hide markers on map
+     */
     hideMarkers = () => {
         this.state.markers.forEach((marker) => {
             marker.setMap(null);
         });
     };
-
 
     render() {
         const {map, markers, attractions, infowindow} = this.state;

@@ -1,42 +1,84 @@
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+    background-color: #222;
+    height: 150px;
+    padding: 20px;
+    color: white;
 }
 
 .App-title {
-  font-size: 1.5em;
+    font-size: 1.5em;
 }
 
 .App-intro {
-  font-size: large;
+    font-size: large;
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.map{
-  display: inline-block;
-  width: 80%;
-  height: 750px;
-  vertical-align: top;
+.map {
+    display: inline-block;
+    width: 80%;
+    height: 750px;
+    vertical-align: top;
 }
 
-.location-list{
-  display: inline-block;
-  width: 20%;
-  height: 750px;
-  vertical-align: top;
+.location-list {
+    display: inline-block;
+    width: 20%;
+    height: 750px;
+    vertical-align: top;
+}
+
+.location-list ul {
+    margin: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.location-list li {
+    margin: auto;
+    padding: 5px;
+    font-size: medium;
+}
+
+@media (max-width: 800px){
+    .location-list li {
+        font-size: small;
+        padding-left: 3px;
+        padding-right: 3px;
+        margin: auto;
+    }
+    .search-input{
+        max-width: 100px;
+    }
+}
+
+@media (max-width: 500px) {
+    .location-list li {
+        font-size: x-small;
+        padding-left: 3px;
+        padding-right: 3px;
+        margin: auto;
+    }
+    .search-input{
+        max-width: 60px;
+    }
 }

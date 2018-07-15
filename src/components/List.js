@@ -2,6 +2,11 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 
+/**
+ * Fetch data from wiki and assign to infowindow
+ * @param marker marker on map
+ * @param info infowindow to show data
+ */
 function assignWikiData(marker, info) {
     let url = 'https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&exintro&titles=' + marker.title + '&format=json&utf8'
     let content = 'SORRY, NOT FOUND IN WIKI';
@@ -23,8 +28,17 @@ function assignWikiData(marker, info) {
     });
 }
 
+/**
+ * List class
+ */
 class List extends Component {
-    static propTypes = {};
+    static propTypes = {
+        attractions: PropTypes.array.isRequired,
+        map:PropTypes.object.isRequired,
+        markers:PropTypes.array.isRequired,
+        placeMarkers:PropTypes.func.isRequired,
+        infowindow:PropTypes.object.isRequired
+    };
 
     state = {
         query: ''
@@ -39,18 +53,15 @@ class List extends Component {
     render() {
         const {map, markers, attractions, placeMarkers, infowindow} = this.props;
         const {query} = this.state;
-        // console.log(markers);
         const filteredAttractions = attractions.filter(a => a.name.toUpperCase().includes(query.toUpperCase()));
-        //const filteredMarkers = markers.filter(m=>m.title.toUpperCase().includes(query.toUpperCase()));
-        console.log(query);
-        console.log(filteredAttractions);
-        // console.log(filteredMarkers);
+
         return (
             <div className='location-list'>
                 <form className='search-form'
                       onChange={
                           (event) => {
-                              placeMarkers(map, filteredAttractions);
+                              const localFiltered = attractions.filter(a => a.name.toUpperCase().includes(event.target.value.toUpperCase()));
+                              placeMarkers(map,localFiltered);
                               event.preventDefault();
                           }
                       }
