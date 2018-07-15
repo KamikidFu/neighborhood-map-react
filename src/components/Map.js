@@ -13,7 +13,9 @@ function asyncLoadMap(url) {
     script.type = 'text/javascript';
     script.async = true;
     script.src = url;
-
+    script.onerror = function () {
+      console.log('Failed to load map, please check your network connection.');
+    };
     let insert = document.getElementsByTagName('script')[0];
     insert.parentNode.insertBefore(script, insert);
 }

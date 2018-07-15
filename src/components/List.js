@@ -10,22 +10,27 @@ import PropTypes from 'prop-types';
 function assignWikiData(marker, info) {
     let url = 'https://en.wikipedia.org/w/api.php?action=query&origin=*&prop=extracts&exintro&titles=' + marker.title + '&format=json&utf8'
     let content = 'SORRY, NOT FOUND IN WIKI';
-    fetch(url, {
-        method: 'POST',
-        headers: new Headers({
-            'Api-User-Agent': 'Example/1.0'
-        })
-    }).then((response) => {
-        if (response.ok) {
-            return response.json();
-        }
-        throw new Error('RESPONSE NOT OK: ' + response.statusText);
-    }).then((data) => {
-        let pages = data.query.pages;
-        let extract = pages[Object.keys(pages)[0]].extract;
-        content = extract.slice(extract.indexOf('<p>'), extract.lastIndexOf('</p>'));
+    try {
+        fetch(url, {
+            method: 'POST',
+            headers: new Headers({
+                'Api-User-Agent': 'Example/1.0'
+            })
+        }).then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('RESPONSE NOT OK: ' + response.statusText);
+        }).then((data) => {
+            let pages = data.query.pages;
+            let extract = pages[Object.keys(pages)[0]].extract;
+            content = extract.slice(extract.indexOf('<p>'), extract.lastIndexOf('</p>'));
+            info.setContent('<div>' + content + '</div>');
+        });
+    } catch (e) {
+        console.log('Failed to fetch data: \n' + e);
         info.setContent('<div>' + content + '</div>');
-    });
+    }
 }
 
 /**
@@ -34,10 +39,10 @@ function assignWikiData(marker, info) {
 class List extends Component {
     static propTypes = {
         attractions: PropTypes.array.isRequired,
-        map:PropTypes.object.isRequired,
-        markers:PropTypes.array.isRequired,
-        placeMarkers:PropTypes.func.isRequired,
-        infowindow:PropTypes.object.isRequired
+        map: PropTypes.object.isRequired,
+        markers: PropTypes.array.isRequired,
+        placeMarkers: PropTypes.func.isRequired,
+        infowindow: PropTypes.object.isRequired
     };
 
     state = {
@@ -61,21 +66,23 @@ class List extends Component {
                       onChange={
                           (event) => {
                               const localFiltered = attractions.filter(a => a.name.toUpperCase().includes(event.target.value.toUpperCase()));
-                              placeMarkers(map,localFiltered);
+                              placeMarkers(map, localFiltered);
                               event.preventDefault();
                           }
                       }
                 >
+                    <label htmlFor="search">Search Here:</label>
                     <input className='search-input' aria-label='search'
                            type='text' value={query} placeholder='Attraction Name' onChange={this.updateQuery}/>
-                    <button className='search-button' type='submit' value='filter' onClick={this.updateQuery}>
+                    <button className='search-button' role='button' type='submit' value={query}
+                            onClick={this.updateQuery}>
                         Search
                     </button>
                 </form>
                 <ul>
                     {
                         filteredAttractions.map(a => (
-                            <li key={a.name} tabIndex='0' onClick={(event) => {
+                            <li role="button" key={a.name} tabIndex='0' onClick={(event) => {
                                 for (let i = 0; i < markers.length; i++) {
                                     if (markers[i].title.trim() === a.name.trim()) {
                                         assignWikiData(markers[i], infowindow);
